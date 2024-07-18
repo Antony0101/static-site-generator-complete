@@ -1,0 +1,30 @@
+{
+  "name": "static-site-generator-complete",
+  "version": "1.0.0",
+  "description": "static site generator in nodejs",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Antony0101/static-site-generator-complete.git"
+  },
+  "author": "antony0101",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Antony0101/static-site-generator-complete/issues"
+  },
+  "homepage": "https://github.com/Antony0101/static-site-generator-complete#readme",
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "eslint": "^9.7.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "3.3.3",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  }
+}
