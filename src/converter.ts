@@ -1,3 +1,6 @@
 function converter(markupString:string):string{
-    return "ahdfjfjfdf" + "ahdfhkdfjsdkfjsd" + "kdfkfkjdf dfjakadsjkfdsfdfkdfksdfksdhf" + "hasdhfdsfkhsdfhsdkfjdskfj"
+    const markupObject = markupStringToObject(markupString)
+    const htmlObject = markupToHtml(markupObject)
+    const htmlString = htmlObjectToString(htmlObject)
+    return htmlString
 }
