@@ -22,15 +22,18 @@ class HtmlNode {
         Object.entries(this.props).forEach((prop) => {
             str += ` ${prop[0]}="${prop[1]}"`;
         });
-        return str;
+        return str.trim();
     }
 
     to_html(): string {
+        const propsString = this.props_to_html();
         if (!this.tag) {
             return this.value || "";
         }
         if (this.children && Array.isArray(this.children)) {
-            let str = ` <${this.tag} ${this.props_to_html()}>`;
+            let str = propsString
+                ? `<${this.tag} ${propsString}>`
+                : `<${this.tag}>`;
             this.children.forEach((child) => {
                 str += `${child.to_html()}`;
             });
@@ -38,8 +41,14 @@ class HtmlNode {
             return str;
         }
         if (this.value) {
-            return ` <${this.tag} ${this.props_to_html()}>${this.value}</${this.tag}>`;
+            return propsString
+                ? `<${this.tag} ${propsString}>${this.value}</${this.tag}>`
+                : `<${this.tag}>${this.value}</${this.tag}>`;
         }
-        return ` <${this.tag} ${this.props_to_html()}/>`;
+        return propsString
+            ? `<${this.tag} ${this.props_to_html()}/>`
+            : `<${this.tag}/>`;
     }
 }
+
+export default HtmlNode;
