@@ -1,10 +1,22 @@
-type MarkupElements =
+export type MarkupElements =
+    // blocks
     | "heading1"
     | "heading2"
+    | "heading3"
+    | "heading4"
+    | "heading5"
+    | "heading6"
+    | "paragraph"
+    | "blockQuote"
+    | "codeBlock"
+    // inline
+    | "lineBreak"
     | "text"
     | "bold"
     | "italic"
-    | "code";
+    | "code"
+    | "link"
+    | "image";
 
 class MarkupNode {
     element: MarkupElements;
@@ -24,3 +36,5 @@ class MarkupNode {
         this.link = link;
     }
 }
+
+export default MarkupNode;

@@ -5,7 +5,7 @@ class HtmlNode {
     children: HtmlNode[] | undefined;
 
     constructor(
-        tag: string,
+        tag: string | null,
         props: { [key: string]: string },
         value?: string,
         children?: HtmlNode[],
