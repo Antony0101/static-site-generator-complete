@@ -69,8 +69,11 @@ function markupToHtml(markupTree: MarkupNode[]) {
 }
 
 function markupStringToObject(markupString: string): MarkupNode[] {
-    const partialBlock = markupString.split("\n\n");
-    return [new MarkupNode("blockQuote", undefined, "hello")];
+    const partialBlocks = markupString.split("\n\n");
+    const markupNodes: MarkupNode[] = [];
+    for (const partialBlock of partialBlocks) {
+    }
+    return markupNodes;
 }
 
 export { markupToHtml, markupStringToObject };
