@@ -23,17 +23,22 @@ class MarkupNode {
     content?: string;
     children?: MarkupNode[];
     link?: string;
+    metadata: {
+        title?: string;
+    };
 
     constructor(
         element: MarkupElements,
         children?: MarkupNode[],
         content?: string,
         link?: string,
+        metadata?: { title?: string },
     ) {
         this.element = element;
         this.children = children;
         this.content = content;
         this.link = link;
+        this.metadata = metadata ?? {};
     }
 }
 

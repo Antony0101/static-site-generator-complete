@@ -19,19 +19,53 @@ function* matchAllGenerator(value: string, regex: RegExp) {
     }
 }
 
-function parseLinks(markupNodes: MarkupNode[]) {
+function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
     // assuming first function to called. so markupNode is text node and with content and no children.
     const newNodes: MarkupNode[] = [];
+    // below regex will match every []() except ![]()
+    const linkRegex = /(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/;
+    // this regex also captures the character before [  so i have to handle it seperately ( i don't know how to modify this regex to prevent that capture. )
     for (const markupNode of markupNodes) {
-        const parts =
-            markupNode.content?.match(/(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/g) ||
-            [];
+        // const parts =
+        //     markupNode.content?.match(/(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/g) ||
+        //     [];
+        const parts = [];
+        if (!markupNode.content) {
+            continue;
+        }
+        for (const data of matchAllGenerator(markupNode.content, linkRegex)) {
+            parts.push(data);
+        }
         if (parts.length === 0) {
             newNodes.push(markupNode);
             continue;
         }
-        const content = markupNode.content;
+        let content = markupNode.content;
+        for (const part of parts) {
+            const contentSplits = content.split(part[0], 2);
+            content = contentSplits[1];
+            if (contentSplits[0]) {
+                newNodes.push(
+                    new MarkupNode(
+                        "text",
+                        undefined,
+                        contentSplits[0] + part[1],
+                    ),
+                );
+            }
+            const part2 = part[3];
+            const [link, title, ...discard] = part2.split('"');
+            newNodes.push(
+                new MarkupNode("link", undefined, part[2], link.trim(), {
+                    title,
+                }),
+            );
+        }
+        if (content) {
+            newNodes.push(new MarkupNode("text", undefined, content));
+        }
     }
+    return newNodes;
 }
 
 function parseImages(markupNodes: MarkupNode[]) {
@@ -45,4 +79,4 @@ function inlineParser(value: string): MarkupNode[] {
     return [new MarkupNode("text", [])];
 }
 
-export { inlineParser, matchAllGenerator };
+export { inlineParser, matchAllGenerator, parseLinks };
