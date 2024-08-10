@@ -5,6 +5,7 @@ import {
     parseLinks,
     parseImages,
     parseNodesDelimiter,
+    inlineParser,
 } from "../../../src/markup/markupInline.helpers";
 import MarkupNode from "../../../src/markup/markup.class";
 
@@ -236,6 +237,25 @@ describe("tests for delimiter parser", () => {
                 new MarkupNode("text", undefined, " world world,"),
             ]),
             new MarkupNode("text", undefined, "hello symbol"),
+        ]);
+    });
+});
+
+describe("tests for inline parser", () => {
+    test("simple test", () => {
+        const content =
+            "An elaborate pantheon of deities (the `Valar` and `Maiar`)";
+        const result = inlineParser(content);
+        expect(result).toEqual([
+            new MarkupNode(
+                "text",
+                undefined,
+                "An elaborate pantheon of deities (the ",
+            ),
+            new MarkupNode("code", undefined, "Valar"),
+            new MarkupNode("text", undefined, " and "),
+            new MarkupNode("code", undefined, "Maiar"),
+            new MarkupNode("text", undefined, ")"),
         ]);
     });
 });
