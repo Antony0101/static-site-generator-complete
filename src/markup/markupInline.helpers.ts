@@ -1,4 +1,4 @@
-import MarkupNode from "./markup.class";
+import MarkupNode, { MarkupElements } from "./markup.class";
 
 function* matchAllGenerator(value: string, regex: RegExp) {
     // won't support global regex
@@ -19,6 +19,50 @@ function* matchAllGenerator(value: string, regex: RegExp) {
     }
 }
 
+function parseNodesDelimiter(
+    markupNodes: MarkupNode[],
+    delimiter: string,
+    nodeType: MarkupElements,
+) {
+    const newNodes: MarkupNode[] = [];
+    for (const markupNode of markupNodes) {
+        if (markupNode.children) {
+            markupNode.children = parseNodesDelimiter(
+                markupNode.children,
+                delimiter,
+                nodeType,
+            );
+            newNodes.push(markupNode);
+            continue;
+        }
+        if (!markupNode.content) {
+            newNodes.push(markupNode);
+            continue;
+        }
+        let content = markupNode.content;
+        const parts = content.split(delimiter);
+        if (parts.length % 2 === 0) {
+            throw new Error(`Closing delimiter ${delimiter} not found`);
+        }
+        const children: MarkupNode[] = [];
+        parts.forEach((part, index) => {
+            if (index % 2 === 0) {
+                children.push(new MarkupNode("text", undefined, part));
+            } else {
+                children.push(new MarkupNode(nodeType, undefined, part));
+            }
+        });
+        if (markupNode.element === "text") {
+            newNodes.push(...children);
+        } else {
+            markupNode.children = children;
+            markupNode.content = undefined;
+            newNodes.push(markupNode);
+        }
+    }
+    return newNodes;
+}
+
 function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
     // assuming first function to called. so markupNode is text node and with content and no children.
     const newNodes: MarkupNode[] = [];
@@ -31,6 +75,7 @@ function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
         //     [];
         const parts = [];
         if (!markupNode.content) {
+            newNodes.push(markupNode);
             continue;
         }
         for (const data of matchAllGenerator(markupNode.content, linkRegex)) {
@@ -69,14 +114,67 @@ function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
 }
 
 function parseImages(markupNodes: MarkupNode[]) {
-    const newNodes = [];
+    // assuming first function to called. so markupNode is text node and with content and no children.
+    const newNodes: MarkupNode[] = [];
+    // below regex will match only ![]()
+    const imageRegex = /!\[(.*?)\]\((.*?)\)/;
     for (const markupNode of markupNodes) {
+        if (markupNode.children) {
+            markupNode.children = parseImages(markupNode.children);
+            newNodes.push(markupNode);
+            continue;
+        }
+        if (!markupNode.content) {
+            newNodes.push(markupNode);
+            continue;
+        }
+        const parts = [];
+        for (const data of matchAllGenerator(markupNode.content, imageRegex)) {
+            parts.push(data);
+        }
+        if (parts.length === 0) {
+            newNodes.push(markupNode);
+            continue;
+        }
+        let content = markupNode.content;
+        for (const part of parts) {
+            const contentSplits = content.split(part[0], 2);
+            content = contentSplits[1];
+            if (contentSplits[0]) {
+                newNodes.push(
+                    new MarkupNode("text", undefined, contentSplits[0]),
+                );
+            }
+            const part2 = part[2];
+            const [link, title, ...discard] = part2.split('"');
+            newNodes.push(
+                new MarkupNode("image", undefined, part[1], link.trim(), {
+                    title,
+                }),
+            );
+        }
+        if (content) {
+            newNodes.push(new MarkupNode("text", undefined, content));
+        }
     }
+    return newNodes;
 }
 
 function inlineParser(value: string): MarkupNode[] {
-    const markupnodes: MarkupNode[] = [];
-    return [new MarkupNode("text", [])];
+    // currently won't support image within link
+    let markupnodes: MarkupNode[] = [new MarkupNode("text", undefined, value)];
+    markupnodes = parseLinks(markupnodes);
+    markupnodes = parseImages(markupnodes);
+    markupnodes = parseNodesDelimiter(markupnodes, "**", "bold");
+    markupnodes = parseNodesDelimiter(markupnodes, "*", "italic");
+    markupnodes = parseNodesDelimiter(markupnodes, "`", "code");
+    return markupnodes;
 }
 
-export { inlineParser, matchAllGenerator, parseLinks };
+export {
+    inlineParser,
+    matchAllGenerator,
+    parseLinks,
+    parseImages,
+    parseNodesDelimiter,
+};

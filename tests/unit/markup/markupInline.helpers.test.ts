@@ -3,6 +3,8 @@ import { describe, test, expect } from "vitest";
 import {
     matchAllGenerator,
     parseLinks,
+    parseImages,
+    parseNodesDelimiter,
 } from "../../../src/markup/markupInline.helpers";
 import MarkupNode from "../../../src/markup/markup.class";
 
@@ -127,6 +129,113 @@ describe("test for parseLink function", () => {
                 { title: "Hobbit lifestyles" },
             ),
             new MarkupNode("text", undefined, ", that means comfort'."),
+        ]);
+    });
+});
+
+describe("test for parseImage function", () => {
+    test("simple parseImage test", () => {
+        const content =
+            '![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")';
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseImages(nodes);
+        expect(result).toEqual([
+            new MarkupNode(
+                "image",
+                undefined,
+                "hobbit-hole",
+                "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
+                { title: "Hobbit lifestyles" },
+            ),
+        ]);
+    });
+    test("without title", () => {
+        const content =
+            "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseImages(nodes);
+        expect(result).toEqual([
+            new MarkupNode(
+                "image",
+                undefined,
+                "hobbit-hole",
+                "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
+                { title: undefined },
+            ),
+        ]);
+    });
+    test("with text before and after", () => {
+        const content =
+            "hello ![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) sam";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseImages(nodes);
+        expect(result).toEqual([
+            new MarkupNode("text", undefined, "hello "),
+            new MarkupNode(
+                "image",
+                undefined,
+                "hobbit-hole",
+                "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
+                { title: undefined },
+            ),
+            new MarkupNode("text", undefined, " sam"),
+        ]);
+    });
+    // currently image within links are not supported as this relationship is very hard to capture with  regex.
+    // test("with image in link", () => {
+    //     const content = `hello [![An old rock in the desert](/assets/images/shiprock.jpg "Shiprock, New Mexico by Beau Rogers")](https://www.flickr.com/photos/beaurogers/31833779864/in/photolist) sam`;
+    //     const nodes = [new MarkupNode("text", undefined, content)];
+    //     const startNodes = parseLinks(nodes);
+    //     console.log(startNodes);
+    //     const result = parseImages(startNodes);
+    //     expect(result).toEqual([
+    //         new MarkupNode("text", undefined, "hello "),
+    //         new MarkupNode(
+    //             "image",
+    //             undefined,
+    //             "hobbit-hole",
+    //             "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
+    //             { title: undefined },
+    //         ),
+    //         new MarkupNode("text", undefined, " sam"),
+    //     ]);
+    // });
+});
+
+describe("tests for delimiter parser", () => {
+    test("simple delimiter", () => {
+        const content = "hello hello **hello** world world";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseNodesDelimiter(nodes, "**", "bold");
+        expect(result).toEqual([
+            new MarkupNode("text", undefined, "hello hello "),
+            new MarkupNode("bold", undefined, "hello"),
+            new MarkupNode("text", undefined, " world world"),
+        ]);
+    });
+    test("delimiter error when closing symbol is not found", () => {
+        const content = "hello world *hello world";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        expect(() => parseNodesDelimiter(nodes, "*", "bold")).toThrow(
+            "Closing delimiter * not found",
+        );
+    });
+    test("delimiter with multiple parts", () => {
+        const content =
+            "hello hello **world in the world *world world* in the , hello * care* world world,**hello symbol";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        let result = parseNodesDelimiter(nodes, "**", "bold");
+        result = parseNodesDelimiter(result, "*", "italic");
+        expect(result).toEqual([
+            new MarkupNode("text", undefined, "hello hello "),
+            new MarkupNode("bold", [
+                new MarkupNode("text", undefined, "world in the world "),
+                new MarkupNode("italic", undefined, "world world"),
+                new MarkupNode("text", undefined, " in the , hello "),
+                new MarkupNode("italic", undefined, " care"),
+                new MarkupNode("text", undefined, " world world,"),
+            ]),
+            new MarkupNode("text", undefined, "hello symbol"),
         ]);
     });
 });
