@@ -45,7 +45,14 @@ function parseNodesDelimiter(
             throw new Error(`Closing delimiter ${delimiter} not found`);
         }
         const children: MarkupNode[] = [];
+        if (parts.length === 1) {
+            newNodes.push(markupNode);
+            continue;
+        }
         parts.forEach((part, index) => {
+            if (!part) {
+                return;
+            }
             if (index % 2 === 0) {
                 children.push(new MarkupNode("text", undefined, part));
             } else {
@@ -168,6 +175,7 @@ function inlineParser(value: string): MarkupNode[] {
     markupnodes = parseNodesDelimiter(markupnodes, "**", "bold");
     markupnodes = parseNodesDelimiter(markupnodes, "*", "italic");
     markupnodes = parseNodesDelimiter(markupnodes, "`", "code");
+
     return markupnodes;
 }
 

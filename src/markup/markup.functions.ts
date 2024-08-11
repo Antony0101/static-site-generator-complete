@@ -38,6 +38,14 @@ function markupToHtml(markupTree: MarkupNode[]) {
             case "codeBlock":
                 htmlNode.tag = "pre";
                 break;
+            case "orderedList":
+                htmlNode.tag = "ol";
+                break;
+            case "unorderedList":
+                htmlNode.tag = "ul";
+                break;
+            case "listElement":
+                htmlNode.tag = "li";
             case "lineBreak":
                 htmlNode.tag = "br";
                 break;

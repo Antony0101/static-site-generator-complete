@@ -9,6 +9,9 @@ export type MarkupElements =
     | "paragraph"
     | "blockQuote"
     | "codeBlock"
+    | "orderedList"
+    | "unorderedList"
+    | "listElement"
     // inline
     | "lineBreak"
     | "text"

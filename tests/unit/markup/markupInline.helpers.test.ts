@@ -72,6 +72,12 @@ describe("test for parseLink function", () => {
             ),
         ]);
     });
+    test("without link", () => {
+        const content = "hello world";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseLinks(nodes);
+        expect(result).toEqual([new MarkupNode("text", undefined, content)]);
+    });
     test("without title", () => {
         const content =
             "[hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
@@ -150,6 +156,12 @@ describe("test for parseImage function", () => {
             ),
         ]);
     });
+    test("withoout image", () => {
+        const content = "hello world";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseImages(nodes);
+        expect(result).toEqual([new MarkupNode("text", undefined, content)]);
+    });
     test("without title", () => {
         const content =
             "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
@@ -187,7 +199,6 @@ describe("test for parseImage function", () => {
     //     const content = `hello [![An old rock in the desert](/assets/images/shiprock.jpg "Shiprock, New Mexico by Beau Rogers")](https://www.flickr.com/photos/beaurogers/31833779864/in/photolist) sam`;
     //     const nodes = [new MarkupNode("text", undefined, content)];
     //     const startNodes = parseLinks(nodes);
-    //     console.log(startNodes);
     //     const result = parseImages(startNodes);
     //     expect(result).toEqual([
     //         new MarkupNode("text", undefined, "hello "),
@@ -212,6 +223,23 @@ describe("tests for delimiter parser", () => {
             new MarkupNode("text", undefined, "hello hello "),
             new MarkupNode("bold", undefined, "hello"),
             new MarkupNode("text", undefined, " world world"),
+        ]);
+    });
+    test("simple delimiter 2", () => {
+        const content = "hello hello **hello**";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseNodesDelimiter(nodes, "**", "bold");
+        expect(result).toEqual([
+            new MarkupNode("text", undefined, "hello hello "),
+            new MarkupNode("bold", undefined, "hello"),
+        ]);
+    });
+    test("content without delimiter", () => {
+        const content = "hello hello world world";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseNodesDelimiter(nodes, "**", "bold");
+        expect(result).toEqual([
+            new MarkupNode("text", undefined, "hello hello world world"),
         ]);
     });
     test("delimiter error when closing symbol is not found", () => {
