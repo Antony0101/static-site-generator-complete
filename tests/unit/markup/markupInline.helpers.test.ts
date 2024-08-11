@@ -93,6 +93,19 @@ describe("test for parseLink function", () => {
             ),
         ]);
     });
+    test("check with image", () => {
+        const content =
+            "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
+        const nodes = [new MarkupNode("text", undefined, content)];
+        const result = parseLinks(nodes);
+        expect(result).toEqual([
+            new MarkupNode(
+                "text",
+                undefined,
+                "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)",
+            ),
+        ]);
+    });
     test("with text before and after", () => {
         const content =
             "hello [hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) sam";

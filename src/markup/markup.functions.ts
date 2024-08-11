@@ -1,5 +1,6 @@
 import HtmlNode from "../html/html.class";
 import MarkupNode from "./markup.class";
+import { blockParser } from "./markupBlock.helpers";
 
 function markupToHtml(markupTree: MarkupNode[]) {
     const htmlTree = new HtmlNode("div", {}, undefined, []);
@@ -80,6 +81,7 @@ function markupStringToObject(markupString: string): MarkupNode[] {
     const partialBlocks = markupString.split("\n\n");
     const markupNodes: MarkupNode[] = [];
     for (const partialBlock of partialBlocks) {
+        markupNodes.push(blockParser(partialBlock));
     }
     return markupNodes;
 }

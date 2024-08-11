@@ -74,8 +74,11 @@ function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
     // assuming first function to called. so markupNode is text node and with content and no children.
     const newNodes: MarkupNode[] = [];
     // below regex will match every []() except ![]()
-    const linkRegex = /(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/;
+    // const linkRegex = /(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/;
     // this regex also captures the character before [  so i have to handle it seperately ( i don't know how to modify this regex to prevent that capture. )
+
+    // below regex works fine (the problem of capture group still exist. i can use this regex /(?:^|[^!])\[(.*?)\]\((.*?)\)/ to create non capture group but still it is going to extract that first character )  i am keeping a above regex comments for future references as i am not good in regex.
+    const linkRegex = /(^|[^!])\[(.*?)\]\((.*?)\)/;
     for (const markupNode of markupNodes) {
         // const parts =
         //     markupNode.content?.match(/(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/g) ||
