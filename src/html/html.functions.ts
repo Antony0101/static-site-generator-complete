@@ -1,4 +1,4 @@
-import HtmlNode from "./html.class";
+import HtmlNode from "./html.class.js";
 
 function htmlObjectToString(htmlTree: HtmlNode) {
     const htmlString = htmlTree.to_html();

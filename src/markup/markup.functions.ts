@@ -1,6 +1,6 @@
-import HtmlNode from "../html/html.class";
-import MarkupNode from "./markup.class";
-import { blockParser } from "./markupBlock.helpers";
+import HtmlNode from "../html/html.class.js";
+import MarkupNode from "./markup.class.js";
+import { blockParser } from "./markupBlock.helpers.js";
 
 function markupToHtml(markupTree: MarkupNode[]) {
     const htmlTree = new HtmlNode("div", {}, undefined, []);
