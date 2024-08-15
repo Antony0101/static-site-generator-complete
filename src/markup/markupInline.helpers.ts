@@ -1,4 +1,4 @@
-import MarkupNode, { MarkupElements } from "./markup.class";
+import MarkupNode, { MarkupElements } from "./markup.class.js";
 
 function* matchAllGenerator(value: string, regex: RegExp) {
     // won't support global regex

@@ -1,5 +1,5 @@
-import MarkupNode from "./markup.class";
-import { inlineParser } from "./markupInline.helpers";
+import MarkupNode from "./markup.class.js";
+import { inlineParser } from "./markupInline.helpers.js";
 
 function assignChildrenOrContent(
     markupNode: MarkupNode,
