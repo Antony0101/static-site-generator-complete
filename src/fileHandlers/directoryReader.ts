@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import formatedHtmlCreator from "../converter.js";
 
-async function ConvertMarkupFilesToHtmlFiles(src: string, dest: string) {
+async function ConvertMarkdownFilesToHtmlFiles(src: string, dest: string) {
     // finds files recursively
     async function applyActionToFileRecrusively(
         dir: string,
@@ -26,7 +26,7 @@ async function ConvertMarkupFilesToHtmlFiles(src: string, dest: string) {
         }
     }
 
-    async function readMarkupFiles(filePath: string) {
+    async function readMarkdownFiles(filePath: string) {
         if (filePath.split(".")[1] === "md") {
             const fileContent = await fs.readFile(filePath, {
                 encoding: "utf8",
@@ -53,9 +53,9 @@ async function ConvertMarkupFilesToHtmlFiles(src: string, dest: string) {
     }
     await fs.mkdir(dest);
     // run the applyActionToFileRecrusively to proccessing
-    await applyActionToFileRecrusively(src, readMarkupFiles, {
+    await applyActionToFileRecrusively(src, readMarkdownFiles, {
         createDestinationDirectory: true,
     });
 }
 
-export { ConvertMarkupFilesToHtmlFiles };
+export { ConvertMarkdownFilesToHtmlFiles };

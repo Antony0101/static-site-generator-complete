@@ -1,4 +1,4 @@
-export type MarkupElements =
+export type MarkdownElements =
     // blocks
     | "heading1"
     | "heading2"
@@ -21,18 +21,18 @@ export type MarkupElements =
     | "link"
     | "image";
 
-class MarkupNode {
-    element: MarkupElements;
+class MarkdownNode {
+    element: MarkdownElements;
     content?: string;
-    children?: MarkupNode[];
+    children?: MarkdownNode[];
     link?: string;
     metadata: {
         title?: string;
     };
 
     constructor(
-        element: MarkupElements,
-        children?: MarkupNode[],
+        element: MarkdownElements,
+        children?: MarkdownNode[],
         content?: string,
         link?: string,
         metadata?: { title?: string },
@@ -45,4 +45,4 @@ class MarkupNode {
     }
 }
 
-export default MarkupNode;
+export default MarkdownNode;

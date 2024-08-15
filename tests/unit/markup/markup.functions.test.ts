@@ -1,21 +1,25 @@
 import { describe, test, expect } from "vitest";
 import {
-    markupStringToObject,
-    markupToHtml,
-} from "../../../src/markup/markup.functions";
-import MarkupNode from "../../../src/markup/markup.class";
+    markdownStringToObject,
+    markdownToHtml,
+} from "../../../src/markdown/markdown.functions";
+import MarkdownNode from "../../../src/markdown/markdown.class";
 import HtmlNode from "../../../src/html/html.class";
 
-describe("markupToHtml tests", () => {
-    test("simple markup", () => {
-        const markupHeading = new MarkupNode("heading2", undefined, "hello");
-        const markupBody = new MarkupNode("paragraph", [
-            new MarkupNode("text", undefined, "hello "),
-            new MarkupNode("bold", undefined, "world"),
-            new MarkupNode("text", undefined, " !2"),
+describe("markdownToHtml tests", () => {
+    test("simple markdown", () => {
+        const markdownHeading = new MarkdownNode(
+            "heading2",
+            undefined,
+            "hello",
+        );
+        const markdownBody = new MarkdownNode("paragraph", [
+            new MarkdownNode("text", undefined, "hello "),
+            new MarkdownNode("bold", undefined, "world"),
+            new MarkdownNode("text", undefined, " !2"),
         ]);
-        const markup = [markupHeading, markupBody];
-        const htmlTree = markupToHtml(markup);
+        const markdown = [markdownHeading, markdownBody];
+        const htmlTree = markdownToHtml(markdown);
         expect(htmlTree).toEqual(
             new HtmlNode("div", {}, undefined, [
                 new HtmlNode("h2", {}, "hello"),

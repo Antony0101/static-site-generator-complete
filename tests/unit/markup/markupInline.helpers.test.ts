@@ -6,8 +6,8 @@ import {
     parseImages,
     parseNodesDelimiter,
     inlineParser,
-} from "../../../src/markup/markupInline.helpers";
-import MarkupNode from "../../../src/markup/markup.class";
+} from "../../../src/markdown/markdownInline.helpers";
+import MarkdownNode from "../../../src/markdown/markdown.class";
 
 describe("matchAllGenerator for regex matching", () => {
     test("testing normal regex cases", () => {
@@ -60,10 +60,10 @@ describe("test for parseLink function", () => {
     test("simple parseLink test", () => {
         const content =
             '[hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")';
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseLinks(nodes);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "link",
                 undefined,
                 "hobbit-hole",
@@ -74,17 +74,17 @@ describe("test for parseLink function", () => {
     });
     test("without link", () => {
         const content = "hello world";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseLinks(nodes);
-        expect(result).toEqual([new MarkupNode("text", undefined, content)]);
+        expect(result).toEqual([new MarkdownNode("text", undefined, content)]);
     });
     test("without title", () => {
         const content =
             "[hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseLinks(nodes);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "link",
                 undefined,
                 "hobbit-hole",
@@ -96,10 +96,10 @@ describe("test for parseLink function", () => {
     test("check with image", () => {
         const content =
             "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseLinks(nodes);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "text",
                 undefined,
                 "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)",
@@ -109,46 +109,46 @@ describe("test for parseLink function", () => {
     test("with text before and after", () => {
         const content =
             "hello [hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) sam";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseLinks(nodes);
         expect(result).toEqual([
-            new MarkupNode("text", undefined, "hello "),
-            new MarkupNode(
+            new MarkdownNode("text", undefined, "hello "),
+            new MarkdownNode(
                 "link",
                 undefined,
                 "hobbit-hole",
                 "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
                 { title: undefined },
             ),
-            new MarkupNode("text", undefined, " sam"),
+            new MarkdownNode("text", undefined, " sam"),
         ]);
     });
     test("complex content", () => {
         const content = `In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a [hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles"), and [hobbit-hole1](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles"), that means comfort'.`;
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseLinks(nodes);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "text",
                 undefined,
                 "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a ",
             ),
-            new MarkupNode(
+            new MarkdownNode(
                 "link",
                 undefined,
                 "hobbit-hole",
                 "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
                 { title: "Hobbit lifestyles" },
             ),
-            new MarkupNode("text", undefined, ", and "),
-            new MarkupNode(
+            new MarkdownNode("text", undefined, ", and "),
+            new MarkdownNode(
                 "link",
                 undefined,
                 "hobbit-hole1",
                 "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
                 { title: "Hobbit lifestyles" },
             ),
-            new MarkupNode("text", undefined, ", that means comfort'."),
+            new MarkdownNode("text", undefined, ", that means comfort'."),
         ]);
     });
 });
@@ -157,10 +157,10 @@ describe("test for parseImage function", () => {
     test("simple parseImage test", () => {
         const content =
             '![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")';
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseImages(nodes);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "image",
                 undefined,
                 "hobbit-hole",
@@ -171,17 +171,17 @@ describe("test for parseImage function", () => {
     });
     test("withoout image", () => {
         const content = "hello world";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseImages(nodes);
-        expect(result).toEqual([new MarkupNode("text", undefined, content)]);
+        expect(result).toEqual([new MarkdownNode("text", undefined, content)]);
     });
     test("without title", () => {
         const content =
             "![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseImages(nodes);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "image",
                 undefined,
                 "hobbit-hole",
@@ -193,36 +193,36 @@ describe("test for parseImage function", () => {
     test("with text before and after", () => {
         const content =
             "hello ![hobbit-hole](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) sam";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseImages(nodes);
         expect(result).toEqual([
-            new MarkupNode("text", undefined, "hello "),
-            new MarkupNode(
+            new MarkdownNode("text", undefined, "hello "),
+            new MarkdownNode(
                 "image",
                 undefined,
                 "hobbit-hole",
                 "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
                 { title: undefined },
             ),
-            new MarkupNode("text", undefined, " sam"),
+            new MarkdownNode("text", undefined, " sam"),
         ]);
     });
     // currently image within links are not supported as this relationship is very hard to capture with  regex.
     // test("with image in link", () => {
     //     const content = `hello [![An old rock in the desert](/assets/images/shiprock.jpg "Shiprock, New Mexico by Beau Rogers")](https://www.flickr.com/photos/beaurogers/31833779864/in/photolist) sam`;
-    //     const nodes = [new MarkupNode("text", undefined, content)];
+    //     const nodes = [new MarkdownNode("text", undefined, content)];
     //     const startNodes = parseLinks(nodes);
     //     const result = parseImages(startNodes);
     //     expect(result).toEqual([
-    //         new MarkupNode("text", undefined, "hello "),
-    //         new MarkupNode(
+    //         new MarkdownNode("text", undefined, "hello "),
+    //         new MarkdownNode(
     //             "image",
     //             undefined,
     //             "hobbit-hole",
     //             "https://en.wikipedia.org/wiki/Hobbit#Lifestyle",
     //             { title: undefined },
     //         ),
-    //         new MarkupNode("text", undefined, " sam"),
+    //         new MarkdownNode("text", undefined, " sam"),
     //     ]);
     // });
 });
@@ -230,34 +230,34 @@ describe("test for parseImage function", () => {
 describe("tests for delimiter parser", () => {
     test("simple delimiter", () => {
         const content = "hello hello **hello** world world";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseNodesDelimiter(nodes, "**", "bold");
         expect(result).toEqual([
-            new MarkupNode("text", undefined, "hello hello "),
-            new MarkupNode("bold", undefined, "hello"),
-            new MarkupNode("text", undefined, " world world"),
+            new MarkdownNode("text", undefined, "hello hello "),
+            new MarkdownNode("bold", undefined, "hello"),
+            new MarkdownNode("text", undefined, " world world"),
         ]);
     });
     test("simple delimiter 2", () => {
         const content = "hello hello **hello**";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseNodesDelimiter(nodes, "**", "bold");
         expect(result).toEqual([
-            new MarkupNode("text", undefined, "hello hello "),
-            new MarkupNode("bold", undefined, "hello"),
+            new MarkdownNode("text", undefined, "hello hello "),
+            new MarkdownNode("bold", undefined, "hello"),
         ]);
     });
     test("content without delimiter", () => {
         const content = "hello hello world world";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         const result = parseNodesDelimiter(nodes, "**", "bold");
         expect(result).toEqual([
-            new MarkupNode("text", undefined, "hello hello world world"),
+            new MarkdownNode("text", undefined, "hello hello world world"),
         ]);
     });
     test("delimiter error when closing symbol is not found", () => {
         const content = "hello world *hello world";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         expect(() => parseNodesDelimiter(nodes, "*", "bold")).toThrow(
             "Closing delimiter * not found",
         );
@@ -265,19 +265,19 @@ describe("tests for delimiter parser", () => {
     test("delimiter with multiple parts", () => {
         const content =
             "hello hello **world in the world *world world* in the , hello * care* world world,**hello symbol";
-        const nodes = [new MarkupNode("text", undefined, content)];
+        const nodes = [new MarkdownNode("text", undefined, content)];
         let result = parseNodesDelimiter(nodes, "**", "bold");
         result = parseNodesDelimiter(result, "*", "italic");
         expect(result).toEqual([
-            new MarkupNode("text", undefined, "hello hello "),
-            new MarkupNode("bold", [
-                new MarkupNode("text", undefined, "world in the world "),
-                new MarkupNode("italic", undefined, "world world"),
-                new MarkupNode("text", undefined, " in the , hello "),
-                new MarkupNode("italic", undefined, " care"),
-                new MarkupNode("text", undefined, " world world,"),
+            new MarkdownNode("text", undefined, "hello hello "),
+            new MarkdownNode("bold", [
+                new MarkdownNode("text", undefined, "world in the world "),
+                new MarkdownNode("italic", undefined, "world world"),
+                new MarkdownNode("text", undefined, " in the , hello "),
+                new MarkdownNode("italic", undefined, " care"),
+                new MarkdownNode("text", undefined, " world world,"),
             ]),
-            new MarkupNode("text", undefined, "hello symbol"),
+            new MarkdownNode("text", undefined, "hello symbol"),
         ]);
     });
 });
@@ -288,15 +288,15 @@ describe("tests for inline parser", () => {
             "An elaborate pantheon of deities (the `Valar` and `Maiar`)";
         const result = inlineParser(content);
         expect(result).toEqual([
-            new MarkupNode(
+            new MarkdownNode(
                 "text",
                 undefined,
                 "An elaborate pantheon of deities (the ",
             ),
-            new MarkupNode("code", undefined, "Valar"),
-            new MarkupNode("text", undefined, " and "),
-            new MarkupNode("code", undefined, "Maiar"),
-            new MarkupNode("text", undefined, ")"),
+            new MarkdownNode("code", undefined, "Valar"),
+            new MarkdownNode("text", undefined, " and "),
+            new MarkdownNode("code", undefined, "Maiar"),
+            new MarkdownNode("text", undefined, ")"),
         ]);
     });
 });

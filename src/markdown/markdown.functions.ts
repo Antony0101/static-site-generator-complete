@@ -1,17 +1,17 @@
 import HtmlNode from "../html/html.class.js";
-import MarkupNode from "./markup.class.js";
-import { blockParser } from "./markupBlock.helpers.js";
+import MarkdownNode from "./markdown.class.js";
+import { blockParser } from "./markdownBlock.helpers.js";
 
-function markupToHtml(markupTree: MarkupNode[]) {
+function markdownToHtml(markdownTree: MarkdownNode[]) {
     const htmlTree = new HtmlNode("div", {}, undefined, []);
-    function toHtml(markup: MarkupNode) {
+    function toHtml(markdown: MarkdownNode) {
         let htmlNode: HtmlNode = new HtmlNode(null, {}, undefined);
-        if (markup.children) {
-            htmlNode.children = markup.children.map((child) => toHtml(child));
+        if (markdown.children) {
+            htmlNode.children = markdown.children.map((child) => toHtml(child));
         } else {
-            htmlNode.value = markup.content;
+            htmlNode.value = markdown.content;
         }
-        switch (markup.element) {
+        switch (markdown.element) {
             case "heading1":
                 htmlNode.tag = "h1";
                 break;
@@ -64,26 +64,26 @@ function markupToHtml(markupTree: MarkupNode[]) {
                 break;
             case "link":
                 htmlNode.tag = "a";
-                htmlNode.props["href"] = markup.link || "";
+                htmlNode.props["href"] = markdown.link || "";
                 break;
             case "image":
                 htmlNode.tag = "img";
-                htmlNode.props["src"] = markup.link || "";
+                htmlNode.props["src"] = markdown.link || "";
                 break;
         }
         return htmlNode;
     }
-    htmlTree.children = markupTree.map((markup) => toHtml(markup));
+    htmlTree.children = markdownTree.map((markdown) => toHtml(markdown));
     return htmlTree;
 }
 
-function markupStringToObject(markupString: string): MarkupNode[] {
-    const partialBlocks = markupString.split("\n\n");
-    const markupNodes: MarkupNode[] = [];
+function markdownStringToObject(markdownString: string): MarkdownNode[] {
+    const partialBlocks = markdownString.split("\n\n");
+    const markdownNodes: MarkdownNode[] = [];
     for (const partialBlock of partialBlocks) {
-        markupNodes.push(blockParser(partialBlock));
+        markdownNodes.push(blockParser(partialBlock));
     }
-    return markupNodes;
+    return markdownNodes;
 }
 
-export { markupToHtml, markupStringToObject };
+export { markdownToHtml, markdownStringToObject };

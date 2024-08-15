@@ -1,7 +1,7 @@
-import { ConvertMarkupFilesToHtmlFiles } from "./fileHandlers/directoryReader.js";
+import { ConvertMarkdownFilesToHtmlFiles } from "./fileHandlers/directoryReader.js";
 
 async function build() {
-    await ConvertMarkupFilesToHtmlFiles("./contents", "./public");
+    await ConvertMarkdownFilesToHtmlFiles("./contents", "./public");
 }
 
 build().catch((e) => console.log(e));

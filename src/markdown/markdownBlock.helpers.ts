@@ -1,25 +1,25 @@
-import MarkupNode from "./markup.class.js";
-import { inlineParser } from "./markupInline.helpers.js";
+import MarkdownNode from "./markdown.class.js";
+import { inlineParser } from "./markdownInline.helpers.js";
 
 function assignChildrenOrContent(
-    markupNode: MarkupNode,
-    children: MarkupNode[],
+    markdownNode: MarkdownNode,
+    children: MarkdownNode[],
 ) {
     if (children.length === 0) {
-        markupNode.content = "";
+        markdownNode.content = "";
     } else if (
         children.length === 1 &&
         children[0].element === "text" &&
         children[0].children === undefined
     ) {
-        markupNode.content = children[0].content;
+        markdownNode.content = children[0].content;
     } else {
-        markupNode.children = children;
+        markdownNode.children = children;
     }
-    return markupNode;
+    return markdownNode;
 }
 
-function blockParser(blokString: string): MarkupNode {
+function blockParser(blokString: string): MarkdownNode {
     const stripedString = blokString.trimStart();
     switch (stripedString[0]) {
         case "#":
@@ -31,7 +31,7 @@ function blockParser(blokString: string): MarkupNode {
     }
 }
 
-function handleHeading(value: string): MarkupNode {
+function handleHeading(value: string): MarkdownNode {
     // expects a string starts with #
     if (value[0] !== "#") {
         throw new Error(
@@ -46,25 +46,25 @@ function handleHeading(value: string): MarkupNode {
             break;
         }
     }
-    let marknode: MarkupNode;
+    let marknode: MarkdownNode;
     switch (countHeading) {
         case 1:
-            marknode = new MarkupNode("heading1");
+            marknode = new MarkdownNode("heading1");
             break;
         case 2:
-            marknode = new MarkupNode("heading2");
+            marknode = new MarkdownNode("heading2");
             break;
         case 3:
-            marknode = new MarkupNode("heading3");
+            marknode = new MarkdownNode("heading3");
             break;
         case 4:
-            marknode = new MarkupNode("heading4");
+            marknode = new MarkdownNode("heading4");
             break;
         case 5:
-            marknode = new MarkupNode("heading5");
+            marknode = new MarkdownNode("heading5");
             break;
         case 6:
-            marknode = new MarkupNode("heading6");
+            marknode = new MarkdownNode("heading6");
             break;
         default:
             throw new Error("heading block # count should be between 1 and 6");
@@ -74,23 +74,23 @@ function handleHeading(value: string): MarkupNode {
     return assignChildrenOrContent(marknode, children);
 }
 
-function handleParagraph(value: string): MarkupNode {
-    const marknode = new MarkupNode("paragraph");
+function handleParagraph(value: string): MarkdownNode {
+    const marknode = new MarkdownNode("paragraph");
     const children = inlineParser(value);
     return assignChildrenOrContent(marknode, children);
 }
 
-function handleQuote(value: string): MarkupNode {
-    const markNode = new MarkupNode("blockQuote");
+function handleQuote(value: string): MarkdownNode {
+    const markNode = new MarkdownNode("blockQuote");
     const children = inlineParser(value.replace(">", ""));
     return assignChildrenOrContent(markNode, children);
 }
 
-// function handleUnorderedList(value:string):MarkupNode {
+// function handleUnorderedList(value:string):MarkdownNode {
 //     // currently not implemented
 // }
 
-// function handleOrderedList(value:string):MarkupNode {
+// function handleOrderedList(value:string):MarkdownNode {
 //     // currently not implemented
 // }
 

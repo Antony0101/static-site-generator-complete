@@ -1,12 +1,12 @@
 import { htmlObjectToString } from "./html/html.functions.js";
 import {
-    markupToHtml,
-    markupStringToObject,
-} from "./markup/markup.functions.js";
+    markdownToHtml,
+    markdownStringToObject,
+} from "./markdown/markdown.functions.js";
 
-function converter(markupString: string): string {
-    const markupTree = markupStringToObject(markupString);
-    const htmlTree = markupToHtml(markupTree);
+function converter(markdownString: string): string {
+    const markdownTree = markdownStringToObject(markdownString);
+    const htmlTree = markdownToHtml(markdownTree);
     const htmlString = htmlObjectToString(htmlTree);
     return htmlString;
 }

@@ -1,4 +1,4 @@
-import MarkupNode, { MarkupElements } from "./markup.class.js";
+import MarkdownNode, { MarkdownElements } from "./markdown.class.js";
 
 function* matchAllGenerator(value: string, regex: RegExp) {
     // won't support global regex
@@ -20,33 +20,33 @@ function* matchAllGenerator(value: string, regex: RegExp) {
 }
 
 function parseNodesDelimiter(
-    markupNodes: MarkupNode[],
+    markdownNodes: MarkdownNode[],
     delimiter: string,
-    nodeType: MarkupElements,
+    nodeType: MarkdownElements,
 ) {
-    const newNodes: MarkupNode[] = [];
-    for (const markupNode of markupNodes) {
-        if (markupNode.children) {
-            markupNode.children = parseNodesDelimiter(
-                markupNode.children,
+    const newNodes: MarkdownNode[] = [];
+    for (const markdownNode of markdownNodes) {
+        if (markdownNode.children) {
+            markdownNode.children = parseNodesDelimiter(
+                markdownNode.children,
                 delimiter,
                 nodeType,
             );
-            newNodes.push(markupNode);
+            newNodes.push(markdownNode);
             continue;
         }
-        if (!markupNode.content) {
-            newNodes.push(markupNode);
+        if (!markdownNode.content) {
+            newNodes.push(markdownNode);
             continue;
         }
-        let content = markupNode.content;
+        let content = markdownNode.content;
         const parts = content.split(delimiter);
         if (parts.length % 2 === 0) {
             throw new Error(`Closing delimiter ${delimiter} not found`);
         }
-        const children: MarkupNode[] = [];
+        const children: MarkdownNode[] = [];
         if (parts.length === 1) {
-            newNodes.push(markupNode);
+            newNodes.push(markdownNode);
             continue;
         }
         parts.forEach((part, index) => {
@@ -54,54 +54,54 @@ function parseNodesDelimiter(
                 return;
             }
             if (index % 2 === 0) {
-                children.push(new MarkupNode("text", undefined, part));
+                children.push(new MarkdownNode("text", undefined, part));
             } else {
-                children.push(new MarkupNode(nodeType, undefined, part));
+                children.push(new MarkdownNode(nodeType, undefined, part));
             }
         });
-        if (markupNode.element === "text") {
+        if (markdownNode.element === "text") {
             newNodes.push(...children);
         } else {
-            markupNode.children = children;
-            markupNode.content = undefined;
-            newNodes.push(markupNode);
+            markdownNode.children = children;
+            markdownNode.content = undefined;
+            newNodes.push(markdownNode);
         }
     }
     return newNodes;
 }
 
-function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
-    // assuming first function to called. so markupNode is text node and with content and no children.
-    const newNodes: MarkupNode[] = [];
+function parseLinks(markdownNodes: MarkdownNode[]): MarkdownNode[] {
+    // assuming first function to called. so markdownNode is text node and with content and no children.
+    const newNodes: MarkdownNode[] = [];
     // below regex will match every []() except ![]()
     // const linkRegex = /(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/;
     // this regex also captures the character before [  so i have to handle it seperately ( i don't know how to modify this regex to prevent that capture. )
 
     // below regex works fine (the problem of capture group still exist. i can use this regex /(?:^|[^!])\[(.*?)\]\((.*?)\)/ to create non capture group but still it is going to extract that first character )  i am keeping a above regex comments for future references as i am not good in regex.
     const linkRegex = /(^|[^!])\[(.*?)\]\((.*?)\)/;
-    for (const markupNode of markupNodes) {
+    for (const markdownNode of markdownNodes) {
         // const parts =
-        //     markupNode.content?.match(/(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/g) ||
+        //     markdownNode.content?.match(/(^|\B|\s|[^!])\[(.*?)\]\((.*?)\)/g) ||
         //     [];
         const parts = [];
-        if (!markupNode.content) {
-            newNodes.push(markupNode);
+        if (!markdownNode.content) {
+            newNodes.push(markdownNode);
             continue;
         }
-        for (const data of matchAllGenerator(markupNode.content, linkRegex)) {
+        for (const data of matchAllGenerator(markdownNode.content, linkRegex)) {
             parts.push(data);
         }
         if (parts.length === 0) {
-            newNodes.push(markupNode);
+            newNodes.push(markdownNode);
             continue;
         }
-        let content = markupNode.content;
+        let content = markdownNode.content;
         for (const part of parts) {
             const contentSplits = content.split(part[0], 2);
             content = contentSplits[1];
             if (contentSplits[0]) {
                 newNodes.push(
-                    new MarkupNode(
+                    new MarkdownNode(
                         "text",
                         undefined,
                         contentSplits[0] + part[1],
@@ -111,75 +111,80 @@ function parseLinks(markupNodes: MarkupNode[]): MarkupNode[] {
             const part2 = part[3];
             const [link, title, ...discard] = part2.split('"');
             newNodes.push(
-                new MarkupNode("link", undefined, part[2], link.trim(), {
+                new MarkdownNode("link", undefined, part[2], link.trim(), {
                     title,
                 }),
             );
         }
         if (content) {
-            newNodes.push(new MarkupNode("text", undefined, content));
+            newNodes.push(new MarkdownNode("text", undefined, content));
         }
     }
     return newNodes;
 }
 
-function parseImages(markupNodes: MarkupNode[]) {
-    // assuming first function to called. so markupNode is text node and with content and no children.
-    const newNodes: MarkupNode[] = [];
+function parseImages(markdownNodes: MarkdownNode[]) {
+    // assuming first function to called. so markdownNode is text node and with content and no children.
+    const newNodes: MarkdownNode[] = [];
     // below regex will match only ![]()
     const imageRegex = /!\[(.*?)\]\((.*?)\)/;
-    for (const markupNode of markupNodes) {
-        if (markupNode.children) {
-            markupNode.children = parseImages(markupNode.children);
-            newNodes.push(markupNode);
+    for (const markdownNode of markdownNodes) {
+        if (markdownNode.children) {
+            markdownNode.children = parseImages(markdownNode.children);
+            newNodes.push(markdownNode);
             continue;
         }
-        if (!markupNode.content) {
-            newNodes.push(markupNode);
+        if (!markdownNode.content) {
+            newNodes.push(markdownNode);
             continue;
         }
         const parts = [];
-        for (const data of matchAllGenerator(markupNode.content, imageRegex)) {
+        for (const data of matchAllGenerator(
+            markdownNode.content,
+            imageRegex,
+        )) {
             parts.push(data);
         }
         if (parts.length === 0) {
-            newNodes.push(markupNode);
+            newNodes.push(markdownNode);
             continue;
         }
-        let content = markupNode.content;
+        let content = markdownNode.content;
         for (const part of parts) {
             const contentSplits = content.split(part[0], 2);
             content = contentSplits[1];
             if (contentSplits[0]) {
                 newNodes.push(
-                    new MarkupNode("text", undefined, contentSplits[0]),
+                    new MarkdownNode("text", undefined, contentSplits[0]),
                 );
             }
             const part2 = part[2];
             const [link, title, ...discard] = part2.split('"');
             newNodes.push(
-                new MarkupNode("image", undefined, part[1], link.trim(), {
+                new MarkdownNode("image", undefined, part[1], link.trim(), {
                     title,
                 }),
             );
         }
         if (content) {
-            newNodes.push(new MarkupNode("text", undefined, content));
+            newNodes.push(new MarkdownNode("text", undefined, content));
         }
     }
     return newNodes;
 }
 
-function inlineParser(value: string): MarkupNode[] {
+function inlineParser(value: string): MarkdownNode[] {
     // currently won't support image within link
-    let markupnodes: MarkupNode[] = [new MarkupNode("text", undefined, value)];
-    markupnodes = parseLinks(markupnodes);
-    markupnodes = parseImages(markupnodes);
-    markupnodes = parseNodesDelimiter(markupnodes, "**", "bold");
-    markupnodes = parseNodesDelimiter(markupnodes, "*", "italic");
-    markupnodes = parseNodesDelimiter(markupnodes, "`", "code");
+    let markdownnodes: MarkdownNode[] = [
+        new MarkdownNode("text", undefined, value),
+    ];
+    markdownnodes = parseLinks(markdownnodes);
+    markdownnodes = parseImages(markdownnodes);
+    markdownnodes = parseNodesDelimiter(markdownnodes, "**", "bold");
+    markdownnodes = parseNodesDelimiter(markdownnodes, "*", "italic");
+    markdownnodes = parseNodesDelimiter(markdownnodes, "`", "code");
 
-    return markupnodes;
+    return markdownnodes;
 }
 
 export {
