@@ -35,7 +35,7 @@ async function ConvertMarkdownFilesToHtmlFiles(src: string, dest: string) {
             const relativePath = path.relative(src, filePath);
             const destinationPath =
                 path.join(dest, relativePath).split(".")[0] + ".html";
-            const converted = formatedHtmlCreator(fileName, fileContent);
+            const converted = await formatedHtmlCreator(fileName, fileContent);
             await fs.writeFile(destinationPath, converted);
         } else {
             const fileContent = await fs.readFile(filePath, {

@@ -1,4 +1,5 @@
 import { htmlObjectToString } from "./html/html.functions.js";
+import { format } from "prettier";
 import {
     markdownToHtml,
     markdownStringToObject,
@@ -11,7 +12,7 @@ function converter(markdownString: string): string {
     return htmlString;
 }
 
-function formatedHtmlCreator(title: string, content: string) {
+async function formatedHtmlCreator(title: string, content: string) {
     const convertedContent = converter(content);
     const htmlContent = `<!DOCTYPE html>
     <html lang="en">
@@ -19,13 +20,12 @@ function formatedHtmlCreator(title: string, content: string) {
         <meta charset="UTF-8" />
         <meta name="description" content="sample description" />
         <title>${title}</title>
-        <link rel="stylesheet" crossorigin href="/assets/index-BvEl8Eta.css">
     </head>
     <body>
         ${convertedContent}
     </body>
     </html>`;
-    return htmlContent;
+    return await format(htmlContent, { parser: "html" });
 }
 
 export default formatedHtmlCreator;
