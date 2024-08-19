@@ -7,7 +7,8 @@
     "scripts": {
         "test": "vitest",
         "build:source": "tsc",
-        "build": "npm run build:source && node dist/index.js"
+        "build": "npm run build:source && node dist/index.js",
+        "serve": "node dist/server.js"
     },
     "repository": {
         "type": "git",
@@ -20,6 +21,8 @@
     },
     "homepage": "https://github.com/Antony0101/static-site-generator-complete#readme",
     "devDependencies": {
+        "@types/express": "^4.17.21",
+        "@types/morgan": "^1.9.9",
         "@types/node": "^20.14.11",
         "eslint": "^9.7.0",
         "eslint-config-prettier": "^9.1.0",
@@ -28,5 +31,9 @@
         "tsx": "^4.16.2",
         "typescript": "^5.5.3",
         "vitest": "^2.0.4"
+    },
+    "dependencies": {
+        "express": "^4.19.2",
+        "morgan": "^1.10.0"
     }
 }
