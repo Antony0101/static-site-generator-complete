@@ -20,6 +20,7 @@ async function formatedHtmlCreator(title: string, content: string) {
         <meta charset="UTF-8" />
         <meta name="description" content="sample description" />
         <title>${title}</title>
+        <link href="/index.css" rel="stylesheet">
     </head>
     <body>
         ${convertedContent}
