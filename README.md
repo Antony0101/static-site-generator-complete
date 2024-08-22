@@ -1,6 +1,6 @@
 # static-site-generator-complete
 
-This is a static site generator that uses markdown files to generate a static site. Its still in development and not yet complete. Currntlly only the build command is implemented and will generate the static site in the public folder. Also the site is not yet styled. Currently only heading and paragraph blocks are supported. Most of the inline blocks are supported but will not work correctly when nested inside other inline blocks. However, the inline blocks will work correctly when nested inside a Heading or Paragraph block. As of now, the supported inline blocks are:
+This is a static site generator that uses markdown files to generate a static site. Its still in development and not yet complete. Currentlly only the build command is implemented and will generate the static site in the public folder. Also the site is not yet styled. Currently only heading and paragraph blocks are supported. Most of the inline blocks are supported but will not work correctly when nested inside other inline blocks. However, the inline blocks will work correctly when nested inside a Heading or Paragraph block. As of now, the supported inline blocks are:
 
 -   Bold
 -   Italic
@@ -35,3 +35,11 @@ npm run build
 -   [ ] Add support for code blocks
 -   [ ] Add support for lists
 -   [ ] Update the content folder structure to add custom style sheets and scripts to the markdown files
+
+## Pages Folder Structure
+
+It is a file based routing system. The pages folder structure will be converted to the site structure. The pages folder structure should be as follows:
+
+Each folder is a path and each folder can contain either a index.html and a style.css file (optional if not mentioned it will take the styles from the parent folder) or a content.md file ( markdown file that will be converted to html), a template.html file (optional if not mentioned it will take the template from the parent folder), style.css file (optional if not mentioned it will take the styles from the parent folder) and meta.json file.
+
+if the folder contains a content.md file then the content.md file will be converted to html and will be placed in the index.html file.
