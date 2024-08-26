@@ -38,8 +38,6 @@ npm run build
 
 ## Pages Folder Structure
 
-It is a file based routing system. The pages folder structure will be converted to the site structure. The pages folder structure should be as follows:
+It is a file based routing system. The contents/page folder structure will be converted to the site structure. The contents/pages folder structure should be as follows:
 
-Each folder is a path and each folder can contain either a index.html and a style.css file (optional if not mentioned it will take the styles from the parent folder) or a content.md file ( markdown file that will be converted to html), a template.html file (optional if not mentioned it will take the template from the parent folder), style.css file (optional if not mentioned it will take the styles from the parent folder) and meta.json file.
-
-if the folder contains a content.md file then the content.md file will be converted to html and will be placed in the index.html file.
+Folder can contain content.md file and meta.json file. The content.md file will contain the content of the page and the meta.json file will contain the metadata of the page. The meta.json file should contain the following fields: title, description, keywords, author, template, css and scripts. Folder can contain any number of subfolders and each subfolder can contain content.md and meta.json files. The site structure will be generated based on the folder structure of the contents/pages folder. The generated site will be in the public folder. The templates are in the contents/templates folder. The css and scripts are in the contents/css and contents/scripts folders respectively.

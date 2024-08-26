@@ -5,6 +5,7 @@ import {
     markdownStringToObject,
 } from "./markdown/markdown.functions.js";
 import fs from "fs/promises";
+import { getTemplate } from "./fileHandlers/loadTemplate.js";
 
 function converter(markdownString: string): string {
     const markdownTree = markdownStringToObject(markdownString);
@@ -13,26 +14,45 @@ function converter(markdownString: string): string {
     return htmlString;
 }
 
-async function formatedHtmlCreator(title: string, content: string) {
+type Meta = {
+    title?: string;
+    description?: string;
+    keywords: string[];
+    author?: string;
+    template?: string;
+    css: string[];
+    scripts: string[];
+};
+
+async function formatedHtmlCreator(content: string, meta: Meta) {
     const convertedContent = converter(content);
-    const htmlTemplate = await fs.readFile("./src/resources/template.html", {
-        encoding: "utf8",
-    });
+    let htmlTemplate = await getTemplate(meta.template);
+    let title = meta.title || "";
+    let metaString = "";
+    if (meta.description) {
+        metaString += `<meta name="description" content="${meta.description}">`;
+    }
+    if (meta.keywords && meta.keywords.length > 0) {
+        metaString += `<meta name="keywords" content="${meta.keywords.join(
+            ", ",
+        )}">`;
+    }
+    if (meta.author) {
+        metaString += `<meta name="author" content="${meta.author}">`;
+    }
+    if (meta.css && meta.css.length > 0) {
+        meta.css.forEach((css) => {
+            metaString += `<link rel="stylesheet" href="${css}">`;
+        });
+    }
+    if (meta.scripts && meta.scripts.length > 0) {
+        meta.scripts.forEach((script) => {
+            metaString += `<script src="${script}"></script>`;
+        });
+    }
     const htmlContent = htmlTemplate
         .replace("{{ Title }}", title)
         .replace("{{ Content }}", convertedContent);
-    // const htmlContent = `<!DOCTYPE html>
-    // <html lang="en">
-    // <head>
-    //     <meta charset="UTF-8" />
-    //     <meta name="description" content="sample description" />
-    //     <title>${title}</title>
-    //     <link href="/index.css" rel="stylesheet">
-    // </head>
-    // <body>
-    //     ${convertedContent}
-    // </body>
-    // </html>`;
     return await format(htmlContent, { parser: "html" });
 }
 

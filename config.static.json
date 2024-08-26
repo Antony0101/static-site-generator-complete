@@ -1,0 +1,7 @@
+{
+    "templatesDir": "./contents/templates",
+    "stylesDir": "./contents/styles",
+    "scriptsDir": "./contents/scripts",
+    "sourceDir": "./contents",
+    "outputDir": "./public"
+}

@@ -1,0 +1,13 @@
+{
+    "title": "Sample Page",
+    "description": "This is a sample page",
+    "keywords": ["sample", "page"],
+    "author": "John Doe",
+    "template": "default",
+    "css": [
+        "sample.css"
+    ],
+    "scripts": [
+        "sample.js"
+    ]
+}
