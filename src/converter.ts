@@ -4,7 +4,6 @@ import {
     markdownToHtml,
     markdownStringToObject,
 } from "./markdown/markdown.functions.js";
-import fs from "fs/promises";
 import { getTemplate } from "./fileHandlers/loadTemplate.js";
 import globalConstants from "./config/globalConstants.js";
 import { getConfig } from "./fileHandlers/loadConfig.js";

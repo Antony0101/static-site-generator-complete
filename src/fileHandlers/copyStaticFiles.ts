@@ -12,7 +12,6 @@ export async function copyStyleFiles() {
     await fs.writeFile(dist + "/" + globalConstants.defaultCssUrlName, styles);
     // copy custom styles
     const customCss = config.stylesDir;
-    console.log(customCss);
     const customStyles = await fs.readdir(customCss);
     for (const style of customStyles) {
         const styleContent = await fs.readFile(

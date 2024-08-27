@@ -3,7 +3,6 @@ import joi from "joi";
 import path from "path";
 import formatedHtmlCreator from "../converter.js";
 import { getConfig } from "./loadConfig.js";
-import e from "express";
 
 export const parsePages = async (SourcePath?: string) => {
     let { sourceDir, outputDir } = await getConfig();
@@ -53,10 +52,7 @@ export const parsePages = async (SourcePath?: string) => {
     }
     const html = await formatedHtmlCreator(content, value);
 
-    // const relativePath = path.relative(src, filePath);
     const relativePath = path.relative(sourceDir, currentSource);
     const destinationPath = path.join(outputDir, relativePath) + "/index.html";
-    // const destinationPath =
-    //     path.join(dest, relativePath).split(".")[0] + ".html";
     await fs.writeFile(destinationPath, html);
 };

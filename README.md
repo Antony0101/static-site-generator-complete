@@ -27,8 +27,8 @@ npm run build
 ## Goals
 
 -   [x] Generate static site from markdown files
--   [ ] Update the content folder structure to add metadata to the markdown files
--   [ ] Add style sheet to the generated site
+-   [x] Update the content folder structure to add metadata to the markdown files
+-   [x] Add style sheet to the generated site
 -   [ ] Add Tokenizer and a real Parser to parse the markdown files
 -   [ ] Add support for more inline blocks
 -   [ ] Add support for blockquotes
