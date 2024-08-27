@@ -6,6 +6,8 @@ import {
 } from "./markdown/markdown.functions.js";
 import fs from "fs/promises";
 import { getTemplate } from "./fileHandlers/loadTemplate.js";
+import globalConstants from "./config/globalConstants.js";
+import { getConfig } from "./fileHandlers/loadConfig.js";
 
 function converter(markdownString: string): string {
     const markdownTree = markdownStringToObject(markdownString);
@@ -25,6 +27,7 @@ type Meta = {
 };
 
 async function formatedHtmlCreator(content: string, meta: Meta) {
+    const config = await getConfig();
     const convertedContent = converter(content);
     let htmlTemplate = await getTemplate(meta.template);
     let title = meta.title || "";
@@ -42,7 +45,7 @@ async function formatedHtmlCreator(content: string, meta: Meta) {
     }
     if (meta.css && meta.css.length > 0) {
         meta.css.forEach((css) => {
-            metaString += `<link rel="stylesheet" href="${css}">`;
+            metaString += `<link rel="stylesheet" href="${globalConstants.cssUrlPath + "/" + css}">`;
         });
     }
     if (meta.scripts && meta.scripts.length > 0) {

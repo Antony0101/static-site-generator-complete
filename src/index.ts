@@ -1,3 +1,4 @@
+import { copyStyleFiles } from "./fileHandlers/copyStaticFiles.js";
 import { ConvertMarkdownFilesToHtmlFiles } from "./fileHandlers/directoryReader.js";
 import { parsePages } from "./fileHandlers/fileBuilder.js";
 import { getConfig } from "./fileHandlers/loadConfig.js";
@@ -5,6 +6,7 @@ import { getConfig } from "./fileHandlers/loadConfig.js";
 async function build() {
     const config = await getConfig();
     await parsePages();
+    await copyStyleFiles();
     // await ConvertMarkdownFilesToHtmlFiles("./pages", "./public");
 }
 

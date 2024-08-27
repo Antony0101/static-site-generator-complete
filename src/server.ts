@@ -11,7 +11,7 @@ app.use(express.static("public"));
 app.use(express.static("static"));
 
 app.use((req, res, next) => {
-    res.send("static/notFound.html");
+    res.status(404).sendFile("not-found.html", { root: "static" });
 });
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () =>

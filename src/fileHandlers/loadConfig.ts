@@ -6,7 +6,7 @@ export type Config = {
     sourceDir: string;
     outputDir: string;
     templatesDir: string;
-    cssDir: string;
+    stylesDir: string;
     scriptsDir: string;
 };
 
