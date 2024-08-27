@@ -28,7 +28,7 @@ export const getTemplate = async (templateName?: string) => {
         return templateCache.get(templateName)!;
     } else {
         const template = await readTemplate(
-            config.templateDir + "/" + templateName,
+            config.templatesDir + "/" + templateName,
         );
         templateCache.set(templateName, template);
         return template;

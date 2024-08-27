@@ -52,7 +52,8 @@ async function formatedHtmlCreator(content: string, meta: Meta) {
     }
     const htmlContent = htmlTemplate
         .replace("{{ Title }}", title)
-        .replace("{{ Content }}", convertedContent);
+        .replace("{{ Content }}", convertedContent)
+        .replace("{{ Meta }}", metaString);
     return await format(htmlContent, { parser: "html" });
 }
 

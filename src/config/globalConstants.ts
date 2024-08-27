@@ -1,6 +1,6 @@
 const globalConstants = {
     configLocation: "./config.static.json",
-    defaultTemplateLocation: "./resources/index.html",
+    defaultTemplateLocation: "./src/resources/template.html",
 } as const;
 
 export default globalConstants;

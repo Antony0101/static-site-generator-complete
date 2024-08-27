@@ -5,7 +5,8 @@
     "main": "dist/index.js",
     "type": "module",
     "scripts": {
-        "test": "vitest",
+        "test": "vitest run",
+        "test-watch": "vitest watch",
         "build:source": "tsc",
         "build": "npm run build:source && node dist/index.js",
         "serve": "node dist/server.js"

@@ -3,17 +3,29 @@ import joi from "joi";
 import path from "path";
 import formatedHtmlCreator from "../converter.js";
 import { getConfig } from "./loadConfig.js";
+import e from "express";
 
 export const parsePages = async (SourcePath?: string) => {
     let { sourceDir, outputDir } = await getConfig();
     sourceDir = sourceDir + "/pages";
     const currentSource = SourcePath || sourceDir;
+    if (SourcePath === undefined) {
+        const destExist = !!(await fs.stat(outputDir).catch(() => null));
+        if (destExist) {
+            await fs.rm(outputDir, { recursive: true, force: true });
+        }
+        await fs.mkdir(outputDir);
+    } else {
+        await fs.mkdir(
+            path.join(outputDir, path.relative(sourceDir, SourcePath)),
+        );
+    }
     const files = await fs.readdir(currentSource);
     for (const file of files) {
         const filePath = path.join(currentSource, file);
         const stats = await fs.stat(filePath);
         if (stats.isDirectory()) {
-            parsePages(filePath);
+            await parsePages(filePath);
             continue;
         }
     }

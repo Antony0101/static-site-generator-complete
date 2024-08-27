@@ -5,7 +5,7 @@ import globalConstants from "../config/globalConstants.js";
 export type Config = {
     sourceDir: string;
     outputDir: string;
-    templateDir: string;
+    templatesDir: string;
     cssDir: string;
     scriptsDir: string;
 };
