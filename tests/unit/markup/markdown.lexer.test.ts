@@ -33,4 +33,13 @@ describe("primitiveMarkdownLexer tests", () => {
             { type: "text", content: "2", contentLength: 1 },
         ]);
     });
+    test("escaped characters", () => {
+        const markdown = "hello \\*world\\* !2";
+        const lexerNodes = primitiveMarkdownLexer(markdown);
+        expect(lexerNodes).toEqual([
+            { type: "text", content: "hello *world* ", contentLength: 14 },
+            { type: "!", content: "!", contentLength: 1 },
+            { type: "text", content: "2", contentLength: 1 },
+        ]);
+    });
 });
