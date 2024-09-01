@@ -43,7 +43,7 @@ describe("primitiveMarkdownLexer tests", () => {
         ]);
     });
     test("content with numbers", () => {
-        const markdown = "hello 1234!2 avc12dg3fg3\\*5av\\*ad2";
+        const markdown = "hello 1234!2 avc12dg3fg3\\*5av\\*ad2er";
         const lexerNodes = primitiveMarkdownLexer(markdown);
         expect(lexerNodes).toEqual([
             { type: "text", content: "hello ", contentLength: 6 },
@@ -60,6 +60,36 @@ describe("primitiveMarkdownLexer tests", () => {
             { type: "num", content: "5", contentLength: 1 },
             { type: "text", content: "av*ad", contentLength: 5 },
             { type: "num", content: "2", contentLength: 1 },
+            { type: "text", content: "er", contentLength: 2 },
+        ]);
+    });
+    test("to checkall special characters", () => {
+        const markdown = '#-*_\\\\<>.+`()[],"|!:~adc45df';
+        const lexerNodes = primitiveMarkdownLexer(markdown);
+        expect(lexerNodes).toEqual([
+            { type: "#", content: "#", contentLength: 1 },
+            { type: "-", content: "-", contentLength: 1 },
+            { type: "*", content: "*", contentLength: 1 },
+            { type: "_", content: "_", contentLength: 1 },
+            { type: "text", content: "\\", contentLength: 1 },
+            { type: "<", content: "<", contentLength: 1 },
+            { type: ">", content: ">", contentLength: 1 },
+            { type: ".", content: ".", contentLength: 1 },
+            { type: "+", content: "+", contentLength: 1 },
+            { type: "`", content: "`", contentLength: 1 },
+            { type: "(", content: "(", contentLength: 1 },
+            { type: ")", content: ")", contentLength: 1 },
+            { type: "[", content: "[", contentLength: 1 },
+            { type: "]", content: "]", contentLength: 1 },
+            { type: ",", content: ",", contentLength: 1 },
+            { type: '"', content: '"', contentLength: 1 },
+            { type: "|", content: "|", contentLength: 1 },
+            { type: "!", content: "!", contentLength: 1 },
+            { type: ":", content: ":", contentLength: 1 },
+            { type: "~", content: "~", contentLength: 1 },
+            { type: "text", content: "adc", contentLength: 3 },
+            { type: "num", content: "45", contentLength: 2 },
+            { type: "text", content: "df", contentLength: 2 },
         ]);
     });
 });

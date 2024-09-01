@@ -113,10 +113,8 @@ export function primitiveMarkdownLexer(source: string): lexerNode[] {
         if (node.type === "text") {
             const nums = node.content.match(textSplitterRegex);
             let curContent = node.content;
-            console.log(curContent);
             if (nums) {
                 for (const num of nums) {
-                    // const split = curContent.split(num, 2);
                     const charIndex = curContent.indexOf(num);
                     const split = [
                         curContent.slice(0, charIndex),
@@ -136,9 +134,14 @@ export function primitiveMarkdownLexer(source: string): lexerNode[] {
                             contentLength: num.length,
                         });
                     }
-                    console.log(split);
                     curContent = split[1];
-                    console.log(curContent);
+                }
+                if (curContent) {
+                    proccessedNodes.push({
+                        type: "text",
+                        content: curContent,
+                        contentLength: curContent.length,
+                    });
                 }
                 continue;
             }
