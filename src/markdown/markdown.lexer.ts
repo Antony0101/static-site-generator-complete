@@ -1,5 +1,7 @@
 // this not full lexer as the node meaning in markdown depends on the context. So this lexer is not going to seperate the markdown into tokens. Instead it is to seperate the special characters and text.
 
+import { count } from "console";
+
 // symbols used in markdown with special meaning are: #,-,*,_,\,<,>,.,+,`,(,),[,],",|,!,:,~
 
 export type lexerNodeNames =
@@ -34,6 +36,8 @@ export type lexerNode = {
 
 const lexerRegex = /^(.*?)([#\-\*_,\\<>.\+`\(\)\[\]"|!:~\n]|$)/;
 
+const textSplitterRegex = /([0-9]+)/g;
+
 export function primitiveMarkdownLexer(source: string): lexerNode[] {
     const nodes: lexerNode[] = [];
     let content = source;
@@ -47,7 +51,10 @@ export function primitiveMarkdownLexer(source: string): lexerNode[] {
             break;
         }
         if (match[1]) {
-            // handle the case where the text is escaped
+            const nums = match[1].match(textSplitterRegex);
+            if (nums) {
+            }
+            // handle the case where the previous text is escaped
             if (isEscaped) {
                 const lastNode = nodes[nodes.length - 1];
                 if (lastNode && lastNode.type === "text") {
@@ -101,5 +108,44 @@ export function primitiveMarkdownLexer(source: string): lexerNode[] {
             content = content.slice(stringIndex);
         }
     }
-    return nodes;
+    const proccessedNodes: lexerNode[] = [];
+    for (const node of nodes) {
+        if (node.type === "text") {
+            const nums = node.content.match(textSplitterRegex);
+            let curContent = node.content;
+            console.log(curContent);
+            if (nums) {
+                for (const num of nums) {
+                    // const split = curContent.split(num, 2);
+                    const charIndex = curContent.indexOf(num);
+                    const split = [
+                        curContent.slice(0, charIndex),
+                        curContent.slice(charIndex + num.length),
+                    ];
+                    if (split[0]) {
+                        proccessedNodes.push({
+                            type: "text",
+                            content: split[0],
+                            contentLength: split[0].length,
+                        });
+                    }
+                    if (num) {
+                        proccessedNodes.push({
+                            type: "num",
+                            content: num,
+                            contentLength: num.length,
+                        });
+                    }
+                    console.log(split);
+                    curContent = split[1];
+                    console.log(curContent);
+                }
+                continue;
+            }
+            proccessedNodes.push(node);
+            continue;
+        }
+        proccessedNodes.push(node);
+    }
+    return proccessedNodes;
 }
