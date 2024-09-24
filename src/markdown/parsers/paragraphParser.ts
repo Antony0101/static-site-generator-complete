@@ -1,13 +1,14 @@
-import MarkdownNode from "../markdown.class.js";
-import { sampleTagListValue } from "../markdown.parser.js";
+import { lexerNode } from "../markdown.lexer.js";
+import MarkdownNode, { ContextType } from "../markdown.class.js";
 
 function paragraphParser(
-    input: string,
-    context: sampleTagListValue,
-): { ast: MarkdownNode; characterCount: number } {
+    input: lexerNode[],
+    curIndex: number,
+    context: ContextType[],
+): { ast: MarkdownNode; nextNodeIndex: number } {
     return {
-        ast: new MarkdownNode("paragraph", undefined, input),
-        characterCount: 20,
+        ast: new MarkdownNode("paragraph", undefined),
+        nextNodeIndex: 20,
     };
 }
 
