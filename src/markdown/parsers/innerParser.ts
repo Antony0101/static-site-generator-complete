@@ -126,6 +126,14 @@ function innerParser(
                 }
                 break;
             }
+            case "!": {
+                i = processImageAndLink(prevElem, mNodes, input, i, context);
+                break;
+            }
+            case "[": {
+                i = processImageAndLink(prevElem, mNodes, input, i, context);
+                break;
+            }
             default: {
                 addTextNode(prevElem, mNodes, input[i]);
             }
@@ -133,6 +141,8 @@ function innerParser(
     }
     return { ast: mNodes, nextNodeIndex: i };
 }
+
+// [![An old rock in the desert](/assets/images/shiprock.jpg "Shiprock, New Mexico by Beau Rogers")](https://www.flickr.com/photos/beaurogers/31833779864/in/photolist-Qv3rFw-34mt9F-a9Cmfy-5Ha3Zi-9msKdv-o3hgjr-hWpUte-4WMsJ1-KUQ8N-deshUb-vssBD-6CQci6-8AFCiD-zsJWT-nNfsgB-dPDwZJ-bn9JGn-5HtSXY-6CUhAL-a4UTXB-ugPum-KUPSo-fBLNm-6CUmpy-4WMsc9-8a7D3T-83KJev-6CQ2bK-nNusHJ-a78rQH-nw3NvT-7aq2qf-8wwBso-3nNceh-ugSKP-4mh4kh-bbeeqH-a7biME-q3PtTf-brFpgb-cg38zw-bXMZc-nJPELD-f58Lmo-bXMYG-bz8AAi-bxNtNT-bXMYi-bXMY6-bXMYv)
 
 function processBoldAndItalic(
     prevElem: { value: MarkdownElementType | null },
@@ -217,6 +227,130 @@ function processCode(
         mNodes.push(new MarkdownNode("codeInline", result));
         prevElem.value = "codeInline";
         return i;
+    } else {
+        addTextNode(prevElem, mNodes, input[index]);
+        return index;
+    }
+}
+
+function processImageAndLink(
+    prevElem: { value: MarkdownElementType | null },
+    mNodes: MarkdownNode[],
+    input: lexerNode[],
+    index: number,
+    context: ContextType[],
+) {
+    // const innerContent: lexerNode[] = [];
+    // let flag = false;
+    let i = index;
+    if (input[i].type === "!" && input[i + 1].type === "[") {
+        i += 2;
+        return proccessImageAndLinkLowLevel(
+            prevElem,
+            mNodes,
+            input,
+            i,
+            context,
+            "image",
+        );
+    } else if (input[i].type === "[") {
+        i++;
+        return proccessImageAndLinkLowLevel(
+            prevElem,
+            mNodes,
+            input,
+            i,
+            context,
+            "link",
+        );
+    } else {
+        addTextNode(prevElem, mNodes, input[index]);
+        return index;
+    }
+}
+
+function proccessImageAndLinkLowLevel(
+    prevElem: { value: MarkdownElementType | null },
+    mNodes: MarkdownNode[],
+    input: lexerNode[],
+    index: number,
+    context: ContextType[],
+    elementType: "image" | "link",
+) {
+    let i = index;
+    const innerContent: lexerNode[] = [];
+    let innerString1 = "";
+    let flag = false;
+    while (i < input.length) {
+        let openBracket = 0;
+        if (input[i].type === "[") {
+            openBracket++;
+        }
+        if (input[i].type === "]") {
+            if (openBracket === 0) {
+                flag = true;
+                break;
+            }
+            openBracket--;
+        }
+        innerContent.push(input[i]);
+        innerString1 += input[i].content;
+        i++;
+    }
+    let innerString2 = "";
+    if (flag) {
+        flag = false;
+        i++;
+        if (input[i].type === "(") {
+            i++;
+            while (i < input.length) {
+                let openBracket = 0;
+                if (input[i].type === "(") {
+                    openBracket++;
+                }
+                if (input[i].type === ")") {
+                    if (openBracket === 0) {
+                        flag = true;
+                        break;
+                    }
+                    openBracket--;
+                }
+                innerString2 += input[i].content;
+                i++;
+            }
+        }
+    }
+    if (flag) {
+        const [url, title] = innerString2.split(' "');
+        if (elementType === "image") {
+            mNodes.push(
+                new MarkdownNode("image", innerString1, {
+                    title: title?.replace('"', "") || "",
+                    link: url,
+                }),
+            );
+            prevElem.value = "image";
+            return i;
+        } else {
+            const { ast, nextNodeIndex } = innerParser(
+                innerContent,
+                0,
+                context,
+            );
+            // convert ast to string if it is a single text node
+            const result =
+                ast.length === 1 && ast[0].element === "text"
+                    ? ast[0].content
+                    : ast;
+            mNodes.push(
+                new MarkdownNode("link", result, {
+                    title: title?.replace('"', "") || "",
+                    link: url,
+                }),
+            );
+            prevElem.value = "link";
+            return i;
+        }
     } else {
         addTextNode(prevElem, mNodes, input[index]);
         return index;

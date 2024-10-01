@@ -62,4 +62,29 @@ describe("bold, italic and code", () => {
             new MarkdownNode("text", " and **bold or bold***"),
         ]);
     });
+
+    test("test image and link", () => {
+        const input =
+            "test hello [world](https://world.com) and [bold or bold](https://bold.com)";
+        const lexerNodes = primitiveMarkdownLexer(input);
+        const curIndex = 0;
+        const context = [];
+        const { ast, nextNodeIndex } = innerParser(
+            lexerNodes,
+            curIndex,
+            context,
+        );
+        expect(ast).toEqual([
+            new MarkdownNode("text", "test hello "),
+            new MarkdownNode("link", "world", {
+                link: "https://world.com",
+                title: "",
+            }),
+            new MarkdownNode("text", " and "),
+            new MarkdownNode("link", "bold or bold", {
+                link: "https://bold.com",
+                title: "",
+            }),
+        ]);
+    });
 });
