@@ -134,6 +134,9 @@ function innerParser(
                 i = processImageAndLink(prevElem, mNodes, input, i, context);
                 break;
             }
+            case "<": {
+                i = processHtml(prevElem, mNodes, input, i, context);
+            }
             default: {
                 addTextNode(prevElem, mNodes, input[i]);
             }
@@ -281,8 +284,8 @@ function proccessImageAndLinkLowLevel(
     const innerContent: lexerNode[] = [];
     let innerString1 = "";
     let flag = false;
+    let openBracket = 0;
     while (i < input.length) {
-        let openBracket = 0;
         if (input[i].type === "[") {
             openBracket++;
         }
@@ -353,6 +356,49 @@ function proccessImageAndLinkLowLevel(
         }
     } else {
         addTextNode(prevElem, mNodes, input[index]);
+        return index;
+    }
+}
+
+function processHtml(
+    prevElem: { value: MarkdownElementType | null },
+    mNodes: MarkdownNode[],
+    input: lexerNode[],
+    index: number,
+    context: ContextType[],
+) {
+    let i = index;
+    const innerContent: lexerNode[] = [];
+    let flag = false;
+    let openBracket = 0;
+    return i;
+}
+
+function htmlGetSingleTag(
+    input: lexerNode[],
+    index: number,
+    tag: string,
+    closeTag: string,
+) {
+    let i = index;
+    let openBracket = 0;
+    let flag = false;
+    while (i < input.length) {
+        if (input[i].type === "<") {
+            openBracket++;
+        }
+        if (input[i].type === ">") {
+            if (openBracket === 0) {
+                flag = true;
+                break;
+            }
+            openBracket--;
+        }
+        i++;
+    }
+    if (flag) {
+        return i;
+    } else {
         return index;
     }
 }

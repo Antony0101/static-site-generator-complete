@@ -65,7 +65,7 @@ describe("bold, italic and code", () => {
 
     test("test image and link", () => {
         const input =
-            "test hello [world](https://world.com) and [bold or bold](https://bold.com)";
+            'test hello [world](https://world.com) and [bold or bold](https://bold.com) and image ![image](https://image.com "title here")';
         const lexerNodes = primitiveMarkdownLexer(input);
         const curIndex = 0;
         const context = [];
@@ -85,6 +85,39 @@ describe("bold, italic and code", () => {
                 link: "https://bold.com",
                 title: "",
             }),
+            new MarkdownNode("text", " and image "),
+            new MarkdownNode("image", "image", {
+                link: "https://image.com",
+                title: "title here",
+            }),
+        ]);
+    });
+    test("test image within link", () => {
+        const input =
+            'test hello [![image](https://image.com "title here")](https://world.com "link here")';
+        const lexerNodes = primitiveMarkdownLexer(input);
+        const curIndex = 0;
+        const context = [];
+        const { ast, nextNodeIndex } = innerParser(
+            lexerNodes,
+            curIndex,
+            context,
+        );
+        expect(ast).toEqual([
+            new MarkdownNode("text", "test hello "),
+            new MarkdownNode(
+                "link",
+                [
+                    new MarkdownNode("image", "image", {
+                        link: "https://image.com",
+                        title: "title here",
+                    }),
+                ],
+                {
+                    link: "https://world.com",
+                    title: "link here",
+                },
+            ),
         ]);
     });
 });
